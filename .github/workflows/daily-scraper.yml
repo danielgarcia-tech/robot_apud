@@ -14,15 +14,18 @@ jobs:
   scrape-apudacta:
     runs-on: ubuntu-latest
 
-    # 🛡️ PERMISOS MÍNIMOS
+    # 🛡️ PERMISOS PARA CREAR ISSUES
     permissions:
       contents: read  # Solo leer código
       actions: read   # Leer actions
-      # ❌ NO escribir permisos para seguridad
+      issues: write   # ✅ PERMISO PARA CREAR ISSUES
 
     steps:
     - name: 📥 Checkout repository
       uses: actions/checkout@v4
+      with:
+        # Necesario para usar gh CLI con permisos
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 🐍 Set up Python 3.11
       uses: actions/setup-python@v4
@@ -60,32 +63,36 @@ jobs:
     - name: 📧 Send daily ZIP to Daniel
       if: success()  # Solo enviar si la descarga fue exitosa
       run: |
-        echo "## 📦 ApudActa - Archivo diario $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "✅ **Scraper ejecutado exitosamente**" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📊 Detalles de la descarga:" >> $GITHUB_STEP_SUMMARY
-        echo "- **Fecha:** $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Hora:** $(date +%H:%M) UTC" >> $GITHUB_STEP_SUMMARY
-        echo "- **Archivos encontrados:** $(ls descargas/ | wc -l)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Archivos:**" >> $GITHUB_STEP_SUMMARY
-        for file in descargas/*; do
-          if [ -f "$file" ]; then
-            echo "  - $(basename "$file") ($(du -h "$file" | cut -f1))" >> $GITHUB_STEP_SUMMARY
-          fi
-        done
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 🔐 SEGURIDAD DEL ARCHIVO" >> $GITHUB_STEP_SUMMARY
-        echo "- Los archivos están protegidos con contraseña" >> $GITHUB_STEP_SUMMARY
-        echo "- **Contraseña:** Rua2025" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📁 Descargar archivos" >> $GITHUB_STEP_SUMMARY
-        echo "Los archivos están disponibles en la sección **Artifacts** de esta ejecución:" >> $GITHUB_STEP_SUMMARY
-        echo "- Nombre del artifact: \`apudacta-downloads-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "---" >> $GITHUB_STEP_SUMMARY
-        echo "🤖 *Robot ApudActa*" >> $GITHUB_STEP_SUMMARY
+        # Crear Issue automáticamente para notificar sobre archivos descargados
+        ISSUE_TITLE="📦 ApudActa - Archivo diario $(date +%Y-%m-%d)"
+        ISSUE_BODY="## ✅ Scraper ejecutado exitosamente
+
+### 📊 Detalles de la descarga:
+- **Fecha:** $(date +%Y-%m-%d)
+- **Hora:** $(date +%H:%M) UTC
+- **Archivos encontrados:** $(ls descargas/ | wc -l)
+
+### 📁 Archivos descargados:
+$(for file in descargas/*; do
+  if [ -f "$file" ]; then
+    echo "- $(basename "$file") ($(du -h "$file" | cut -f1))"
+  fi
+done)
+
+### 🔐 SEGURIDAD DEL ARCHIVO
+- Los archivos están protegidos con contraseña
+- **Contraseña:** Rua2025
+
+### � Descargar archivos
+Los archivos están disponibles en la sección **Artifacts** de esta ejecución:
+- Nombre del artifact: \`apudacta-downloads-${{ github.run_number }}\`
+- Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+---
+🤖 *Robot ApudActa - Notificación automática*"
+
+        # Crear el issue usando GitHub CLI
+        echo "$ISSUE_BODY" | gh issue create --title "$ISSUE_TITLE" --body-file - --label "scraper-notification"
 
     - name: 🧹 Cleanup sensitive data
       if: always()
@@ -97,45 +104,57 @@ jobs:
     - name: 📧 Send notification when no files found
       if: success() && !hashFiles('descargas/*.7z')
       run: |
-        echo "## ⚠️ ApudActa - No se encontraron archivos $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "ℹ️ **El scraper se ejecutó correctamente pero no encontró archivos para descargar.**" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 🤔 Posibles razones:" >> $GITHUB_STEP_SUMMARY
-        echo "- No hay nuevos archivos finalizados en ApudActa" >> $GITHUB_STEP_SUMMARY
-        echo "- Todos los archivos ya fueron descargados anteriormente" >> $GITHUB_STEP_SUMMARY
-        echo "- Problema temporal en la plataforma" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "El scraper seguirá funcionando normalmente y te notificará cuando haya archivos disponibles." >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Fecha:** $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
-        echo "**Hora:** $(date +%H:%M) UTC" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "---" >> $GITHUB_STEP_SUMMARY
-        echo "🤖 *Robot ApudActa*" >> $GITHUB_STEP_SUMMARY
+        # Crear Issue automáticamente cuando no hay archivos
+        ISSUE_TITLE="⚠️ ApudActa - No se encontraron archivos $(date +%Y-%m-%d)"
+        ISSUE_BODY="## ℹ️ Scraper ejecutado - Sin archivos nuevos
+
+El scraper se ejecutó correctamente pero no encontró archivos para descargar.
+
+### 🤔 Posibles razones:
+- No hay nuevos archivos finalizados en ApudActa
+- Todos los archivos ya fueron descargados anteriormente
+- Problema temporal en la plataforma
+
+### 📅 Información de ejecución:
+- **Fecha:** $(date +%Y-%m-%d)
+- **Hora:** $(date +%H:%M) UTC
+
+El scraper seguirá funcionando normalmente y te notificará cuando haya archivos disponibles.
+
+---
+🤖 *Robot ApudActa - Notificación automática*"
+
+        # Crear el issue usando GitHub CLI
+        echo "$ISSUE_BODY" | gh issue create --title "$ISSUE_TITLE" --body-file - --label "scraper-notification,no-files"
 
     - name: 📧 Send notification on failure
       if: failure()
       run: |
-        echo "## ❌ Error en ApudActa Scraper - ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "🚨 **Ha ocurrido un error en la ejecución del scraper de ApudActa.**" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📋 Detalles del error:" >> $GITHUB_STEP_SUMMARY
-        echo "- **Fecha:** $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Hora:** $(date +%H:%M) UTC" >> $GITHUB_STEP_SUMMARY
-        echo "- **Run ID:** ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 🔍 Posibles causas:" >> $GITHUB_STEP_SUMMARY
-        echo "- Problemas de conexión con ApudActa" >> $GITHUB_STEP_SUMMARY
-        echo "- Cambios en la interfaz web" >> $GITHUB_STEP_SUMMARY
-        echo "- Credenciales expiradas" >> $GITHUB_STEP_SUMMARY
-        echo "- Problemas temporales de red" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📖 Revisar logs:" >> $GITHUB_STEP_SUMMARY
-        echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "⏰ El scraper intentará ejecutarse nuevamente mañana." >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "---" >> $GITHUB_STEP_SUMMARY
-        echo "🤖 *Robot ApudActa*" >> $GITHUB_STEP_SUMMARY
+        # Crear Issue automáticamente cuando hay error
+        ISSUE_TITLE="❌ Error en ApudActa Scraper - ${{ github.run_number }}"
+        ISSUE_BODY="## 🚨 Error en ejecución del scraper
+
+Ha ocurrido un error en la ejecución del scraper de ApudActa.
+
+### 📋 Detalles del error:
+- **Fecha:** $(date +%Y-%m-%d)
+- **Hora:** $(date +%H:%M) UTC
+- **Run ID:** ${{ github.run_id }}
+
+### 🔍 Posibles causas:
+- Problemas de conexión con ApudActa
+- Cambios en la interfaz web
+- Credenciales expiradas
+- Problemas temporales de red
+
+### 📖 Revisar logs completos:
+https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+### ⏰ Próxima ejecución:
+El scraper intentará ejecutarse nuevamente mañana a las 6:00 AM UTC.
+
+---
+🤖 *Robot ApudActa - Notificación de error*"
+
+        # Crear el issue usando GitHub CLI
+        echo "$ISSUE_BODY" | gh issue create --title "$ISSUE_TITLE" --body-file - --label "scraper-notification,error"
