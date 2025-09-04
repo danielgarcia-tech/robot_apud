@@ -49,38 +49,6 @@ jobs:
         python easyday.py
         echo "✅ Scraper completado"
 
-    - name: 📧 Send daily ZIP to Daniel
-      if: success()  # Solo enviar si la descarga fue exitosa
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp-mail.outlook.com
-        server_port: 587
-        username: ${{ secrets.EMAIL_SENDER }}
-        password: ${{ secrets.EMAIL_SENDER_PASSWORD }}
-        subject: "📦 ApudActa - Archivo diario $(date +%Y-%m-%d)"
-        body: |
-          Hola Daniel,
-
-          Adjunto el archivo 7Z descargado automáticamente desde ApudActa.
-
-          **Detalles de la descarga:**
-          - Fecha: $(date +%Y-%m-%d)
-          - Hora: $(date +%H:%M) UTC
-          - Archivo: $(ls descargas/ | head -1 || echo "No se encontró archivo")
-          - Tamaño: $(du -h descargas/ | tail -1 | cut -f1 || echo "N/A")
-
-          **🔐 SEGURIDAD DEL ARCHIVO:**
-          - El archivo está protegido con contraseña
-          - Usa esta contraseña para abrir el 7Z
-
-          Este email fue enviado automáticamente por el scraper de ApudActa.
-
-          Saludos,
-          Robot ApudActa 🤖
-        to: danielgarcia@ruaabogados.es
-        from: ${{ secrets.EMAIL_SENDER }}
-        attachments: descargas/*.7z  # Adjuntar todos los archivos 7Z
-
     - name: 📁 Upload downloaded files
       uses: actions/upload-artifact@v4
       if: always()  # Subir archivos aunque haya errores
@@ -88,6 +56,36 @@ jobs:
         name: apudacta-downloads-${{ github.run_number }}
         path: descargas/
         retention-days: 7  # ⚠️ SOLO 7 DÍAS para seguridad
+
+    - name: 📧 Send daily ZIP to Daniel
+      if: success()  # Solo enviar si la descarga fue exitosa
+      run: |
+        echo "## 📦 ApudActa - Archivo diario $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Scraper ejecutado exitosamente**" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 Detalles de la descarga:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Fecha:** $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Hora:** $(date +%H:%M) UTC" >> $GITHUB_STEP_SUMMARY
+        echo "- **Archivos encontrados:** $(ls descargas/ | wc -l)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Archivos:**" >> $GITHUB_STEP_SUMMARY
+        for file in descargas/*; do
+          if [ -f "$file" ]; then
+            echo "  - $(basename "$file") ($(du -h "$file" | cut -f1))" >> $GITHUB_STEP_SUMMARY
+          fi
+        done
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔐 SEGURIDAD DEL ARCHIVO" >> $GITHUB_STEP_SUMMARY
+        echo "- Los archivos están protegidos con contraseña" >> $GITHUB_STEP_SUMMARY
+        echo "- **Contraseña:** Rua2025" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📁 Descargar archivos" >> $GITHUB_STEP_SUMMARY
+        echo "Los archivos están disponibles en la sección **Artifacts** de esta ejecución:" >> $GITHUB_STEP_SUMMARY
+        echo "- Nombre del artifact: \`apudacta-downloads-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "🤖 *Robot ApudActa*" >> $GITHUB_STEP_SUMMARY
 
     - name: 🧹 Cleanup sensitive data
       if: always()
@@ -98,64 +96,46 @@ jobs:
 
     - name: 📧 Send notification when no files found
       if: success() && !hashFiles('descargas/*.7z')
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp-mail.outlook.com
-        server_port: 587
-        username: ${{ secrets.EMAIL_SENDER }}
-        password: ${{ secrets.EMAIL_SENDER_PASSWORD }}
-        subject: "⚠️ ApudActa - No se encontraron archivos $(date +%Y-%m-%d)"
-        body: |
-          Hola Daniel,
-
-          El scraper de ApudActa se ejecutó correctamente pero no encontró archivos para descargar.
-
-          **Posibles razones:**
-          - No hay nuevos archivos finalizados en ApudActa
-          - Todos los archivos ya fueron descargados anteriormente
-          - Problema temporal en la plataforma
-
-          El scraper seguirá funcionando normalmente y te notificará cuando haya archivos disponibles.
-
-          Fecha: $(date +%Y-%m-%d)
-          Hora: $(date +%H:%M) UTC
-
-          Saludos,
-          Robot ApudActa 🤖
-        to: danielgarcia@ruaabogados.es
-        from: ${{ secrets.EMAIL_SENDER }}
+      run: |
+        echo "## ⚠️ ApudActa - No se encontraron archivos $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "ℹ️ **El scraper se ejecutó correctamente pero no encontró archivos para descargar.**" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🤔 Posibles razones:" >> $GITHUB_STEP_SUMMARY
+        echo "- No hay nuevos archivos finalizados en ApudActa" >> $GITHUB_STEP_SUMMARY
+        echo "- Todos los archivos ya fueron descargados anteriormente" >> $GITHUB_STEP_SUMMARY
+        echo "- Problema temporal en la plataforma" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "El scraper seguirá funcionando normalmente y te notificará cuando haya archivos disponibles." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Fecha:** $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
+        echo "**Hora:** $(date +%H:%M) UTC" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "🤖 *Robot ApudActa*" >> $GITHUB_STEP_SUMMARY
 
     - name: 📧 Send notification on failure
       if: failure()
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp-mail.outlook.com
-        server_port: 587
-        username: ${{ secrets.EMAIL_SENDER }}
-        password: ${{ secrets.EMAIL_SENDER_PASSWORD }}
-        subject: "❌ Error en ApudActa Scraper - ${{ github.run_number }}"
-        body: |
-          Hola Daniel,
-
-          Ha ocurrido un error en la ejecución del scraper de ApudActa.
-
-          **Detalles del error:**
-          - Fecha: $(date +%Y-%m-%d)
-          - Hora: $(date +%H:%M) UTC
-          - Run ID: ${{ github.run_id }}
-
-          **Posibles causas:**
-          - Problemas de conexión con ApudActa
-          - Cambios en la interfaz web
-          - Credenciales expiradas
-          - Problemas temporales de red
-
-          **Revisar logs:**
-          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-          El scraper intentará ejecutarse nuevamente mañana.
-
-          Saludos,
-          Robot ApudActa 🤖
-        to: danielgarcia@ruaabogados.es
-        from: ${{ secrets.EMAIL_SENDER }}
+      run: |
+        echo "## ❌ Error en ApudActa Scraper - ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "🚨 **Ha ocurrido un error en la ejecución del scraper de ApudActa.**" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📋 Detalles del error:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Fecha:** $(date +%Y-%m-%d)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Hora:** $(date +%H:%M) UTC" >> $GITHUB_STEP_SUMMARY
+        echo "- **Run ID:** ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔍 Posibles causas:" >> $GITHUB_STEP_SUMMARY
+        echo "- Problemas de conexión con ApudActa" >> $GITHUB_STEP_SUMMARY
+        echo "- Cambios en la interfaz web" >> $GITHUB_STEP_SUMMARY
+        echo "- Credenciales expiradas" >> $GITHUB_STEP_SUMMARY
+        echo "- Problemas temporales de red" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📖 Revisar logs:" >> $GITHUB_STEP_SUMMARY
+        echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "⏰ El scraper intentará ejecutarse nuevamente mañana." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "🤖 *Robot ApudActa*" >> $GITHUB_STEP_SUMMARY
