@@ -1,0 +1,105 @@
+name: Daily ApudActa Scraper
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+env:
+  FORCE_COLOR: 1
+
+jobs:
+  scrape-apudacta:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      actions: read
+      issues: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install playwright python-dotenv py7zr
+
+    - name: Install Playwright browsers
+      run: |
+        playwright install chromium
+
+    - name: Run ApudActa Scraper
+      env:
+        EMAIL: ${{ secrets.EMAIL }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+      run: |
+        echo "Starting scraper..."
+        python easyday.py
+        echo "Scraper completed"
+
+    - name: Upload downloaded files
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: apudacta-downloads-${{ github.run_number }}
+        path: descargas/
+        retention-days: 7
+
+    - name: Create success notification issue
+      if: success()
+      run: |
+        ISSUE_TITLE="ApudActa - Success $(date +%Y-%m-%d)"
+        ISSUE_BODY="## Success
+
+Scraper executed successfully.
+
+### Download files:
+- Artifact: apudacta-downloads-${{ github.run_number }}
+- Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+Password: Rua2025
+
+---
+🤖 Robot ApudActa"
+
+        echo "$ISSUE_BODY" | gh issue create --title "$ISSUE_TITLE" --body-file - --label "scraper-notification"
+
+    - name: Create no files notification issue
+      if: success() && !hashFiles('descargas/*.7z')
+      run: |
+        ISSUE_TITLE="ApudActa - No files $(date +%Y-%m-%d)"
+        ISSUE_BODY="## No files found
+
+Scraper ran but found no files to download.
+
+---
+🤖 Robot ApudActa"
+
+        echo "$ISSUE_BODY" | gh issue create --title "$ISSUE_TITLE" --body-file - --label "scraper-notification"
+
+    - name: Create error notification issue
+      if: failure()
+      run: |
+        ISSUE_TITLE="ApudActa - Error ${{ github.run_number }}"
+        ISSUE_BODY="## Error occurred
+
+Check logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+---
+🤖 Robot ApudActa"
+
+        echo "$ISSUE_BODY" | gh issue create --title "$ISSUE_TITLE" --body-file - --label "scraper-notification"
+
+    - name: Cleanup
+      if: always()
+      run: |
+        rm -rf descargas/
