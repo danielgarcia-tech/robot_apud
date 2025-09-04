@@ -49,13 +49,13 @@ jobs:
         python easyday.py
         echo "✅ Scraper completado"
 
-    - name:  Send daily ZIP to Daniel
+    - name: 📧 Send daily ZIP to Daniel
       if: success()  # Solo enviar si la descarga fue exitosa
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
         server_port: 465
-        username: ${{ secrets.EMAIL }}
+        username: danielgarcia@ruaabogados.es
         password: ${{ secrets.EMAIL_PASSWORD }}
         subject: "📦 ApudActa - Archivo diario $(date +%Y-%m-%d)"
         body: |
@@ -78,6 +78,9 @@ jobs:
 
           Saludos,
           Robot ApudActa 🤖
+        to: danielgarcia@ruaabogados.es
+        from: danielgarcia@ruaabogados.es
+        attachments: descargas/*.7z  # Adjuntar todos los archivos 7Z
         to: danielgarcia@ruaabogados.es
         from: ${{ secrets.EMAIL }}
         attachments: descargas/*.7z  # Adjuntar todos los archivos 7Z
@@ -103,7 +106,7 @@ jobs:
       with:
         server_address: smtp.gmail.com
         server_port: 465
-        username: ${{ secrets.EMAIL }}
+        username: danielgarcia@ruaabogados.es
         password: ${{ secrets.EMAIL_PASSWORD }}
         subject: "⚠️ ApudActa - No se encontraron archivos $(date +%Y-%m-%d)"
         body: |
@@ -124,7 +127,7 @@ jobs:
           Saludos,
           Robot ApudActa 🤖
         to: danielgarcia@ruaabogados.es
-        from: ${{ secrets.EMAIL }}
+        from: danielgarcia@ruaabogados.es
 
     - name: 📧 Send notification on failure
       if: failure()
@@ -132,7 +135,7 @@ jobs:
       with:
         server_address: smtp.gmail.com
         server_port: 465
-        username: ${{ secrets.EMAIL }}
+        username: danielgarcia@ruaabogados.es
         password: ${{ secrets.EMAIL_PASSWORD }}
         subject: "❌ Error en ApudActa Scraper - ${{ github.run_number }}"
         body: |
@@ -159,4 +162,4 @@ jobs:
           Saludos,
           Robot ApudActa 🤖
         to: danielgarcia@ruaabogados.es
-        from: ${{ secrets.EMAIL }}
+        from: danielgarcia@ruaabogados.es
