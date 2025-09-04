@@ -1,0 +1,24 @@
+{
+  "detection_method": "interactive_learning",
+  "tagName": "SPAN",
+  "className": "font-bold cursor-pointer text-lg",
+  "textContent": "📂",
+  "cellIndex": 8,
+  "xpath_template": ".//span[@class='font-bold cursor-pointer text-lg' and text()='📂']",
+  "href_pattern": null,
+  "link_target": null,
+  "detected_url": null,
+  "row_data_sample": [
+    "1",
+    "",
+    "2025-09-03_justalia.zip",
+    "7 MB",
+    "03/09/2025",
+    "68",
+    "34",
+    "✅ finalizada",
+    "📂"
+  ],
+  "timestamp": "2025-09-04T16:37:32.351090",
+  "success": true
+}

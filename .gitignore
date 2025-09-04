@@ -1,0 +1,32 @@
+# Archivos de configuración
+.env
+config.json
+
+# Archivos de log
+logs/
+*.log
+
+# Descargas
+descargas/
+downloads/
+
+# Cache del navegador
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos temporales
+temp/
+tmp/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de ChromeDriver
+chromedriver.exe
+chromedriver
+
+# Estado del scraper
+scraper_state.json
+last_download.txt

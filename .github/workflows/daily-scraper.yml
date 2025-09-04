@@ -55,8 +55,8 @@ jobs:
       with:
         server_address: smtp.gmail.com
         server_port: 465
-        username: danielgarcia@ruaabogados.es
-        password: ${{ secrets.EMAIL_PASSWORD }}
+        username: ${{ secrets.EMAIL_SENDER }}
+        password: ${{ secrets.EMAIL_SENDER_PASSWORD }}
         subject: "📦 ApudActa - Archivo diario $(date +%Y-%m-%d)"
         body: |
           Hola Daniel,
@@ -71,7 +71,6 @@ jobs:
 
           **🔐 SEGURIDAD DEL ARCHIVO:**
           - El archivo está protegido con contraseña
-          - Contraseña: Rua2025
           - Usa esta contraseña para abrir el 7Z
 
           Este email fue enviado automáticamente por el scraper de ApudActa.
@@ -79,10 +78,7 @@ jobs:
           Saludos,
           Robot ApudActa 🤖
         to: danielgarcia@ruaabogados.es
-        from: danielgarcia@ruaabogados.es
-        attachments: descargas/*.7z  # Adjuntar todos los archivos 7Z
-        to: danielgarcia@ruaabogados.es
-        from: ${{ secrets.EMAIL }}
+        from: ${{ secrets.EMAIL_SENDER }}
         attachments: descargas/*.7z  # Adjuntar todos los archivos 7Z
 
     - name: 📁 Upload downloaded files
@@ -101,13 +97,13 @@ jobs:
         rm -rf descargas/  # Eliminar archivos locales después de subir
 
     - name: 📧 Send notification when no files found
-      if: success() && steps.upload.outputs.artifact-id == ''
+      if: success() && !hashFiles('descargas/*.7z')
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
         server_port: 465
-        username: danielgarcia@ruaabogados.es
-        password: ${{ secrets.EMAIL_PASSWORD }}
+        username: ${{ secrets.EMAIL_SENDER }}
+        password: ${{ secrets.EMAIL_SENDER_PASSWORD }}
         subject: "⚠️ ApudActa - No se encontraron archivos $(date +%Y-%m-%d)"
         body: |
           Hola Daniel,
@@ -127,7 +123,7 @@ jobs:
           Saludos,
           Robot ApudActa 🤖
         to: danielgarcia@ruaabogados.es
-        from: danielgarcia@ruaabogados.es
+        from: ${{ secrets.EMAIL_SENDER }}
 
     - name: 📧 Send notification on failure
       if: failure()
@@ -135,8 +131,8 @@ jobs:
       with:
         server_address: smtp.gmail.com
         server_port: 465
-        username: danielgarcia@ruaabogados.es
-        password: ${{ secrets.EMAIL_PASSWORD }}
+        username: ${{ secrets.EMAIL_SENDER }}
+        password: ${{ secrets.EMAIL_SENDER_PASSWORD }}
         subject: "❌ Error en ApudActa Scraper - ${{ github.run_number }}"
         body: |
           Hola Daniel,
@@ -162,4 +158,4 @@ jobs:
           Saludos,
           Robot ApudActa 🤖
         to: danielgarcia@ruaabogados.es
-        from: danielgarcia@ruaabogados.es
+        from: ${{ secrets.EMAIL_SENDER }}
