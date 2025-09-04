@@ -53,8 +53,8 @@ jobs:
       if: success()  # Solo enviar si la descarga fue exitosa
       uses: dawidd6/action-send-mail@v3
       with:
-        server_address: smtp.gmail.com
-        server_port: 465
+        server_address: smtp-mail.outlook.com
+        server_port: 587
         username: ${{ secrets.EMAIL_SENDER }}
         password: ${{ secrets.EMAIL_SENDER_PASSWORD }}
         subject: "📦 ApudActa - Archivo diario $(date +%Y-%m-%d)"
@@ -100,8 +100,8 @@ jobs:
       if: success() && !hashFiles('descargas/*.7z')
       uses: dawidd6/action-send-mail@v3
       with:
-        server_address: smtp.gmail.com
-        server_port: 465
+        server_address: smtp-mail.outlook.com
+        server_port: 587
         username: ${{ secrets.EMAIL_SENDER }}
         password: ${{ secrets.EMAIL_SENDER_PASSWORD }}
         subject: "⚠️ ApudActa - No se encontraron archivos $(date +%Y-%m-%d)"
@@ -129,8 +129,8 @@ jobs:
       if: failure()
       uses: dawidd6/action-send-mail@v3
       with:
-        server_address: smtp.gmail.com
-        server_port: 465
+        server_address: smtp-mail.outlook.com
+        server_port: 587
         username: ${{ secrets.EMAIL_SENDER }}
         password: ${{ secrets.EMAIL_SENDER_PASSWORD }}
         subject: "❌ Error en ApudActa Scraper - ${{ github.run_number }}"
