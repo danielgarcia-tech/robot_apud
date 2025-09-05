@@ -65,8 +65,11 @@ jobs:
       if: steps.check_files.outputs.FILES_FOUND == 'true'
       run: |
         MAIN_FILE="${{ steps.check_files.outputs.MAIN_FILE }}"
-        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://hook.eu2.make.com/40abzk3u54x8rpcg8g7r68pfrkmegb4r
-        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://hook.eu2.make.com/1cslr0tdf4bl70bdtfx9edjmrxmz7xn8
+        echo "Enviando archivo $MAIN_FILE a webhooks..."
+        # Webhook de test
+        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook-test/99305ca7-ec18-465a-b192-05f3708387b4
+        # Webhook de producción
+        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook/99305ca7-ec18-465a-b192-05f3708387b4
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
