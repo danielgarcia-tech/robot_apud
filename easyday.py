@@ -405,55 +405,60 @@ class EasyDayScraper:
         print("\n🧹 Iniciando limpieza de archivos temporales...")
         
         try:
-            # Obtener el directorio base donde está el 7Z final
-            base_dir = os.path.dirname(final_7z_path)
-            final_7z_name = os.path.basename(final_7z_path)
-            
-            # Listar todos los elementos en el directorio
-            elementos_encontrados = []
-            if os.path.exists(base_dir):
-                elementos_encontrados = os.listdir(base_dir)
+            # El archivo 7Z final está en el directorio raíz
+            final_7z_name = os.path.basename(final_7z_path) if final_7z_path else ""
             
             eliminados = 0
             errores = 0
             
-            for elemento in elementos_encontrados:
-                elemento_path = os.path.join(base_dir, elemento)
-                
-                # No eliminar el archivo 7Z final
-                if elemento == final_7z_name:
-                    print(f"   ✅ Conservando: {elemento}")
-                    continue
-                
-                try:
-                    if os.path.isfile(elemento_path):
-                        os.remove(elemento_path)
-                        print(f"   🗑️ Eliminado archivo: {elemento}")
-                        eliminados += 1
-                    elif os.path.isdir(elemento_path):
-                        shutil.rmtree(elemento_path)
-                        print(f"   📁🗑️ Eliminada carpeta: {elemento}")
-                        eliminados += 1
-                except Exception as e:
-                    print(f"   ❌ Error eliminando {elemento}: {e}")
-                    errores += 1
+            # 1. Limpiar directorio raíz (excepto el 7Z final)
+            elementos_raiz = []
+            if os.path.exists("."):
+                elementos_raiz = [f for f in os.listdir(".") if os.path.isfile(f)]
             
-            # También limpiar carpetas organizadas específicas si están fuera del directorio base
+            for archivo in elementos_raiz:
+                # Conservar solo el archivo 7Z final
+                if archivo == final_7z_name:
+                    print(f"   ✅ Conservando: {archivo}")
+                    continue
+                    
+                # Eliminar otros archivos temporales (PDFs, etc.)
+                if archivo.endswith(('.pdf', '.zip', '.7z')) or 'solicitud' in archivo.lower() or 'poder' in archivo.lower():
+                    try:
+                        os.remove(archivo)
+                        print(f"   🗑️ Eliminado archivo: {archivo}")
+                        eliminados += 1
+                    except Exception as e:
+                        print(f"   ❌ Error eliminando {archivo}: {e}")
+                        errores += 1
+            
+            # 2. Limpiar carpetas organizadas
             for folder_path in organized_folders:
                 try:
-                    if os.path.exists(folder_path) and os.path.dirname(folder_path) != base_dir:
+                    if os.path.exists(folder_path):
                         shutil.rmtree(folder_path)
-                        print(f"   📁🗑️ Eliminada carpeta externa: {os.path.basename(folder_path)}")
+                        print(f"   📁🗑️ Eliminada carpeta: {os.path.basename(folder_path)}")
                         eliminados += 1
                 except Exception as e:
-                    print(f"   ❌ Error eliminando carpeta externa {folder_path}: {e}")
+                    print(f"   ❌ Error eliminando carpeta {folder_path}: {e}")
+                    errores += 1
+            
+            # 3. Limpiar carpeta de procesados completa
+            if os.path.exists(self.processed_path):
+                try:
+                    shutil.rmtree(self.processed_path)
+                    print(f"   📁🗑️ Eliminada carpeta: {os.path.basename(self.processed_path)}")
+                    eliminados += 1
+                except Exception as e:
+                    print(f"   ❌ Error eliminando carpeta procesados: {e}")
                     errores += 1
             
             print(f"\n🧹 Limpieza completada:")
             print(f"   ✅ Elementos eliminados: {eliminados}")
             if errores > 0:
                 print(f"   ❌ Errores: {errores}")
-            print(f"   📦 Archivo final conservado: {final_7z_name}")
+            if final_7z_name:
+                print(f"   📦 Archivo final conservado: {final_7z_name}")
             
         except Exception as e:
             print(f"❌ Error en limpieza general: {e}")
@@ -941,7 +946,8 @@ class EasyDayScraper:
         print(f"\n📦 PASO 7: Creando archivo 7Z final...")
         
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_7z = os.path.join(self.processed_path, f"apudacta_procesado_{timestamp}.7z")
+        # CREAR EL 7Z EN EL DIRECTORIO RAÍZ PARA QUE SEA ENCONTRADO POR GITHUB ACTIONS
+        output_7z = f"apudacta_procesado_{timestamp}.7z"
         
         try:
             if organized_folder and os.path.exists(organized_folder):
