@@ -1,6 +1,7 @@
 # Archivos de configuración
 .env
 config.json
+button_config.json
 
 # Archivos de log
 logs/
@@ -9,6 +10,7 @@ logs/
 # Descargas
 descargas/
 downloads/
+procesados/
 
 # Cache del navegador
 __pycache__/
@@ -18,6 +20,8 @@ __pycache__/
 # Archivos temporales
 temp/
 tmp/
+*.zip
+*.7z
 
 # Archivos del sistema
 .DS_Store
@@ -30,3 +34,12 @@ chromedriver
 # Estado del scraper
 scraper_state.json
 last_download.txt
+
+# Archivos de desarrollo
+demo*.py
+test*.py
+*.bat
+
+# Requirements obsoletos
+requirements_*.txt
+!requirements.txt

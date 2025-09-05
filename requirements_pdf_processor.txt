@@ -1,6 +1,0 @@
-# Dependencias para PDF Processor and Renamer
-# Procesamiento de PDFs
-PyMuPDF>=1.23.0
-
-# Manejo de archivos y utilidades básicas
-# (Todas las demás dependencias son de la biblioteca estándar de Python)
