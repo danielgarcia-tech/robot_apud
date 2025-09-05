@@ -114,7 +114,7 @@ Scraper executed successfully.
 Password: Rua2025
 
 ---
-🤖 Robot ApudActa"
+Robot ApudActa"
 
         echo "$ISSUE_BODY" | gh issue create --title "$ISSUE_TITLE" --body-file - --label "scraper-notification"
 
@@ -127,7 +127,7 @@ Password: Rua2025
 Scraper ran but found no files to download.
 
 ---
-🤖 Robot ApudActa"
+Robot ApudActa"
 
         echo "$ISSUE_BODY" | gh issue create --title "$ISSUE_TITLE" --body-file - --label "scraper-notification"
 
@@ -140,7 +140,7 @@ Scraper ran but found no files to download.
 Check logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
 ---
-🤖 Robot ApudActa"
+Robot ApudActa"
 
         echo "$ISSUE_BODY" | gh issue create --title "$ISSUE_TITLE" --body-file - --label "scraper-notification"
 
