@@ -2,17 +2,16 @@ name: ApudActa Scraper with PDF Processing
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Ejecutar diariamente a las 6:00 AM UTC
-  workflow_dispatch:  # Permitir ejecución manual
+    - cron: '0 6 * * *'
+  workflow_dispatch:
   push:
     branches: [ main ]
     paths:
-      - 'start_scraper.txt'  # Trigger manual via archivo
+      - 'start_scraper.txt'
 
 jobs:
   scrape_process_and_send:
     runs-on: ubuntu-latest
-    
     permissions:
       contents: read
       actions: read
@@ -36,210 +35,58 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        # Verificar instalación de PyMuPDF
         python -c "import fitz; print('PyMuPDF instalado correctamente:', fitz.version)"
 
     - name: Install Playwright Browsers
       run: playwright install chromium
 
-    - name: Run ApudActa Scraper with PDF Processing
+    - name: Run ApudActa Scraper
       env:
         EMAIL: ${{ secrets.EMAIL }}
         PASSWORD: ${{ secrets.PASSWORD }}
       run: |
-        echo "🚀 Iniciando ApudActa Scraper con procesamiento PDF..."
-        echo "📁 Funcionalidades activas:"
-        echo "   • Descarga de archivos de ApudActa"
-        echo "   • Procesamiento automático de PDFs"
-        echo "   • Extracción de identificadores DNI/NIF/NIE"
-        echo "   • Organización en PODERES/ y SOLICITUDES/"
-        echo "   • Compresión 7Z con password"
-        echo "   • Limpieza automática de archivos temporales"
-        echo ""
-        python easyday.py
-        echo "✅ Scraper completado con procesamiento PDF integrado"
+        echo "Iniciando ApudActa Scraper con procesamiento PDF..."
+        mkdir -p descargas
+        timeout 25m python easyday.py || exit 1
 
-    - name: Check Processed Files
+    - name: Check Downloaded Files
       id: check_files
       run: |
-        echo "🔍 Verificando archivos procesados..."
-        
-        # Buscar archivos 7Z finales
-        if ls apudacta_procesado_*.7z 1> /dev/null 2>&1; then
+        echo "Buscando archivos 7Z generados..."
+        if ls *.7z 1> /dev/null 2>&1; then
+          MAIN_FILE=$(ls -1 *.7z | head -1)
           echo "FILES_FOUND=true" >> $GITHUB_OUTPUT
-          echo "✅ Archivos 7Z encontrados:"
-          ls -la apudacta_procesado_*.7z
-          
-          # Obtener información del archivo principal
-          MAIN_7Z=$(ls apudacta_procesado_*.7z | head -1)
-          echo "MAIN_FILE=$MAIN_7Z" >> $GITHUB_OUTPUT
-          
-          # Mostrar tamaño del archivo
-          SIZE=$(du -h "$MAIN_7Z" | cut -f1)
-          echo "📦 Tamaño del archivo: $SIZE"
-          
+          echo "MAIN_FILE=$MAIN_FILE" >> $GITHUB_OUTPUT
         else
           echo "FILES_FOUND=false" >> $GITHUB_OUTPUT
-          echo "❌ No se encontraron archivos 7Z procesados"
-          
-          # Mostrar contenido del directorio para debug
-          echo "📁 Contenido del directorio actual:"
-          ls -la
         fi
 
-    - name: Send Processed Files to Webhook
+    - name: Send to Webhook
       if: steps.check_files.outputs.FILES_FOUND == 'true'
       run: |
-        echo "📡 Enviando archivo procesado a los webhooks..."
-        
         MAIN_FILE="${{ steps.check_files.outputs.MAIN_FILE }}"
-        
-        if [ -f "$MAIN_FILE" ]; then
-          echo "📦 Enviando $MAIN_FILE a los webhooks de JustiFlow..."
-          
-          # Información del archivo
-          SIZE=$(du -h "$MAIN_FILE" | cut -f1)
-          echo "📊 Tamaño: $SIZE"
-          echo "🏷️ Archivo: $MAIN_FILE"
-          echo "🔐 Protegido con password: Rua2025"
-          echo "📁 Estructura: PODERES/, SOLICITUDES/, Excel en raíz"
-          echo ""
-          
-          # Webhook principal
-          echo "📡 Enviando al webhook principal..."
-          curl -X POST \
-            -F "file=@$MAIN_FILE" \
-            -F "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            -F "run_id=${{ github.run_id }}" \
-            -F "source=github_actions_pdf_processed" \
-            -F "file_type=7z_processed" \
-            -F "password=Rua2025" \
-            -F "structure=organized_subfolders" \
-            https://justiflow.com/webhook/99305ca7-ec18-465a-b192-05f3708387b4
-          
-          echo "✅ Enviado al webhook principal"
-          
-          # Webhook de test
-          echo "📡 Enviando al webhook de test..."
-          curl -X POST \
-            -F "file=@$MAIN_FILE" \
-            -F "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            -F "run_id=${{ github.run_id }}" \
-            -F "source=github_actions_pdf_processed" \
-            -F "file_type=7z_processed" \
-            -F "password=Rua2025" \
-            -F "structure=organized_subfolders" \
-            https://justiflow.com/webhook-test/99305ca7-ec18-465a-b192-05f3708387b4
-          
-          echo "✅ Enviado al webhook de test"
-          echo "🎉 Archivo procesado enviado exitosamente a ambos webhooks"
-        else
-          echo "❌ Error: No se pudo encontrar el archivo procesado"
-          exit 1
-        fi
+        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://hook.eu2.make.com/40abzk3u54x8rpcg8g7r68pfrkmegb4r
+        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://hook.eu2.make.com/1cslr0tdf4bl70bdtfx9edjmrxmz7xn8
 
-    - name: Upload Processed Artifacts
-      if: always()
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v4
+      if: always()
       with:
-        name: apudacta-processed-${{ github.run_number }}
-        path: |
-          apudacta_procesado_*.7z
-          *.log
+        name: apudacta-processed-files
+        path: "*.7z"
         retention-days: 7
+      continue-on-error: true
 
     - name: Create Success Issue
       if: steps.check_files.outputs.FILES_FOUND == 'true'
       run: |
-        MAIN_FILE="${{ steps.check_files.outputs.MAIN_FILE }}"
-        SIZE=$(du -h "$MAIN_FILE" 2>/dev/null | cut -f1 || echo "N/A")
-        
-        gh issue create \
-          --title "✅ ApudActa PDF Success - $(date +%Y-%m-%d)" \
-          --body "🎉 **Scraper ejecutado exitosamente con procesamiento PDF**
-
-📦 **Archivo procesado:** \`$MAIN_FILE\`
-📊 **Tamaño:** $SIZE
-🔐 **Password:** Rua2025
-📁 **Estructura organizada:**
-   • PODERES/ - Certificados de Registro
-   • SOLICITUDES/ - Solicitudes ApudActa  
-   • Excel en raíz
-
-🚀 **Funcionalidades ejecutadas:**
-   ✅ Descarga automática de ApudActa
-   ✅ Procesamiento de PDFs con extracción de identificadores
-   ✅ Organización automática por tipo de documento
-   ✅ Compresión 7Z con password
-   ✅ Limpieza automática de archivos temporales
-   ✅ Envío a webhooks de JustiFlow
-
-🔗 **Logs:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-          --label "success,automated,pdf-processed"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Create No Files Issue
-      if: steps.check_files.outputs.FILES_FOUND == 'false'
-      run: |
-        gh issue create \
-          --title "⚠️ ApudActa - Sin archivos procesados - $(date +%Y-%m-%d)" \
-          --body "🔍 **Scraper ejecutado pero sin archivos finales**
-
-❌ No se encontraron archivos 7Z procesados
-
-🔧 **Posibles causas:**
-   • No había archivos disponibles en ApudActa
-   • Error en el procesamiento de PDFs  
-   • Problema en la compresión final
-   • Error de autenticación
-
-🔗 **Ver logs:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-          --label "no-files,automated,needs-investigation"
+        gh issue create --title "ApudActa Success $(date +%Y-%m-%d)" --body "Proceso completado exitosamente" --label "success"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create Error Issue
       if: failure()
       run: |
-        gh issue create \
-          --title "❌ ApudActa PDF Error - $(date +%Y-%m-%d)" \
-          --body "💥 **Error en el scraper con procesamiento PDF**
-
-🚨 El proceso falló durante la ejecución
-
-🔧 **Componentes del proceso:**
-   • Autenticación en ApudActa
-   • Descarga de archivos
-   • Procesamiento de PDFs (PyMuPDF)
-   • Extracción de identificadores DNI/NIF/NIE
-   • Organización en subcarpetas
-   • Compresión 7Z
-   • Limpieza de archivos temporales
-
-🔗 **Ver logs detallados:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-          --label "error,automated,pdf-processing"
+        gh issue create --title "ApudActa Error $(date +%Y-%m-%d)" --body "Error en el proceso" --label "error"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Final Cleanup
-      if: always()
-      run: |
-        echo "🧹 Limpieza final de GitHub Actions..."
-        
-        # Mostrar archivos antes de limpiar
-        echo "📁 Archivos antes de la limpieza:"
-        ls -la
-        
-        # Solo limpiar archivos temporales, mantener los procesados para artifacts
-        echo "🗑️ Eliminando archivos temporales..."
-        rm -rf descargas/ || true
-        rm -f apudacta_files_*.zip || true
-        rm -rf apudacta_organizado_*/ || true
-        rm -rf temp_*/ || true
-        
-        echo "✅ Limpieza completada"
-        
-        # Mostrar archivos finales
-        echo "📦 Archivos finales conservados:"
-        ls -la apudacta_procesado_*.7z 2>/dev/null || echo "No hay archivos 7Z"
