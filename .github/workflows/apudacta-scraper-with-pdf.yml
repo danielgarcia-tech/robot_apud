@@ -1,0 +1,151 @@
+name: ApudActa Scraper with PDF Processing
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # 6:00 AM UTC daily
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual execution'
+        required: false
+        default: 'Manual trigger'
+
+env:
+  APUDACTA_USERNAME: ${{ secrets.APUDACTA_USERNAME }}
+  APUDACTA_PASSWORD: ${{ secrets.APUDACTA_PASSWORD }}
+
+jobs:
+  scrape-and-process:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y p7zip-full
+        
+    - name: Install Python dependencies
+      run: |
+        pip install --upgrade pip
+        pip install playwright py7zr python-dotenv requests PyMuPDF
+        playwright install chromium
+        
+    - name: Create downloads directory
+      run: mkdir -p downloads
+      
+    - name: Run scraper with PDF processing
+      id: scraper
+      run: |
+        echo "Starting ApudActa scraper with PDF processing..."
+        python easyday_with_pdf_processing.py
+        echo "scraper_status=$?" >> $GITHUB_OUTPUT
+        
+    - name: Check scraper results
+      run: |
+        if [ "${{ steps.scraper.outputs.scraper_status }}" = "0" ]; then
+          echo "✅ Scraper executed successfully with PDF processing"
+        else
+          echo "❌ Scraper failed"
+          exit 1
+        fi
+        
+    - name: Upload processing logs (if any)
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: scraper-logs-${{ github.run_number }}
+        path: |
+          *.log
+          downloads/
+        retention-days: 7
+        
+    - name: Create summary issue on success
+      if: success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const title = `✅ ApudActa Scraper Success - ${new Date().toLocaleDateString('es-ES')}`;
+          const body = `
+          ## 🎉 Scraper Execution Successful
+          
+          **Date:** ${new Date().toLocaleString('es-ES')}
+          **Trigger:** ${{ github.event_name === 'schedule' && 'Scheduled execution' || inputs.reason || 'Manual trigger' }}
+          **Run Number:** #${{ github.run_number }}
+          
+          ### ✨ Features Executed:
+          - 📥 File download from ApudActa
+          - 🔍 PDF content analysis and OCR detection
+          - 🆔 DNI/NIF/NIE identifier extraction
+          - 📊 Metadata generation with processing summary
+          - 📦 Enhanced 7Z creation with metadata
+          - 🚀 Dual webhook delivery (Production + Test)
+          
+          ### 📋 Processing Capabilities:
+          - Text extraction from PDF files
+          - OCR text verification
+          - Client and date information parsing
+          - Document identifier recognition
+          - File metadata enrichment
+          
+          **Webhooks:** Files sent to both production and test endpoints
+          **Security:** Password-protected 7Z with AES-256 encryption
+          
+          [View Workflow Run](${context.payload.repository.html_url}/actions/runs/${context.runId})
+          `;
+          
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: ['scraper-success', 'automated', 'pdf-processing']
+          });
+        
+    - name: Create failure issue on error
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const title = `❌ ApudActa Scraper Failed - ${new Date().toLocaleDateString('es-ES')}`;
+          const body = `
+          ## 💥 Scraper Execution Failed
+          
+          **Date:** ${new Date().toLocaleString('es-ES')}
+          **Trigger:** ${{ github.event_name === 'schedule' && 'Scheduled execution' || inputs.reason || 'Manual trigger' }}
+          **Run Number:** #${{ github.run_number }}
+          
+          ### ❌ Error Details:
+          The scraper with PDF processing encountered an error during execution.
+          
+          ### 🔍 Debugging Steps:
+          1. Check the workflow logs for detailed error messages
+          2. Verify ApudActa credentials are valid
+          3. Ensure PDF processing dependencies are working
+          4. Check webhook endpoints availability
+          
+          ### 📋 Features Affected:
+          - PDF content analysis may have failed
+          - Webhook delivery could be impacted
+          - Metadata generation might be incomplete
+          
+          [View Failed Workflow Run](${context.payload.repository.html_url}/actions/runs/${context.runId})
+          
+          Please investigate and resolve the issue.
+          `;
+          
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: ['scraper-failure', 'bug', 'needs-investigation']
+          });
