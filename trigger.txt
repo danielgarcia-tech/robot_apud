@@ -1,3 +1,0 @@
-# Archivo trigger para ejecutar el scraper manualmente
-# Para ejecutar el scraper, modifica este archivo y haz push
-# Ejecutado el: 2025-09-05 v2
