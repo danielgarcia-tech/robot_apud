@@ -54,6 +54,47 @@ jobs:
         path: descargas/
         retention-days: 7
 
+    - name: Send ZIP to Webhook
+      if: success()
+      run: |
+        echo "📤 Enviando archivos al webhook..."
+        
+        # Crear directorio temporal para los archivos
+        mkdir -p webhook_files
+        
+        # Copiar archivos descargados al directorio temporal
+        if [ -d "descargas" ] && [ "$(ls -A descargas)" ]; then
+          cp -r descargas/* webhook_files/ 2>/dev/null || true
+          
+          # Crear archivo ZIP con todos los archivos
+          cd webhook_files
+          zip -r ../apudacta-files-${{ github.run_number }}.zip . 2>/dev/null || true
+          cd ..
+          
+          # Enviar el ZIP al webhook usando curl
+          if [ -f "apudacta-files-${{ github.run_number }}.zip" ]; then
+            echo "📦 Enviando ZIP al webhook: https://justiflow.com/webhook/99305ca7-ec18-465a-b192-05f3708387b4"
+            
+            # Enviar usando curl con multipart/form-data
+            curl -X POST \
+              -F "file=@apudacta-files-${{ github.run_number }}.zip" \
+              -F "run_id=${{ github.run_id }}" \
+              -F "run_number=${{ github.run_number }}" \
+              -F "date=$(date +%Y-%m-%d)" \
+              -F "repository=${{ github.repository }}" \
+              https://justiflow.com/webhook/99305ca7-ec18-465a-b192-05f3708387b4
+            
+            echo "✅ Archivo enviado exitosamente al webhook"
+          else
+            echo "⚠️ No se encontraron archivos para enviar"
+          fi
+        else
+          echo "⚠️ No hay archivos descargados para enviar"
+        fi
+        
+        # Limpiar archivos temporales
+        rm -rf webhook_files apudacta-files-${{ github.run_number }}.zip
+
     - name: Create success notification issue
       if: success()
       run: |
