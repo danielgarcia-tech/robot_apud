@@ -59,18 +59,20 @@ jobs:
     - name: Send to Webhook
       if: steps.check_files.outputs.FILES_FOUND == 'true'
       run: |
-        echo "Enviando archivos al webhook..."
+        echo "Enviando archivos a los webhooks..."
         
         # Crear ZIP con todos los archivos
         cd descargas
         zip -r ../apudacta_files_$(date +%Y%m%d_%H%M%S).zip *
         cd ..
         
-        # Enviar al webhook
+        # Enviar a los webhooks
         ZIP_FILE=$(ls apudacta_files_*.zip | head -1)
         if [ -f "$ZIP_FILE" ]; then
-          echo "Enviando $ZIP_FILE a JustiFlow webhook..."
+          echo "Enviando $ZIP_FILE a los webhooks de JustiFlow..."
           
+          # Webhook principal
+          echo "Enviando al webhook principal..."
           curl -X POST \
             -F "file=@$ZIP_FILE" \
             -F "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
@@ -78,7 +80,19 @@ jobs:
             -F "source=github_actions" \
             https://justiflow.com/webhook/99305ca7-ec18-465a-b192-05f3708387b4
           
-          echo "Archivo enviado exitosamente"
+          echo "✅ Enviado al webhook principal"
+          
+          # Webhook de test
+          echo "Enviando al webhook de test..."
+          curl -X POST \
+            -F "file=@$ZIP_FILE" \
+            -F "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            -F "run_id=${{ github.run_id }}" \
+            -F "source=github_actions" \
+            https://justiflow.com/webhook-test/99305ca7-ec18-465a-b192-05f3708387b4
+          
+          echo "✅ Enviado al webhook de test"
+          echo "✅ Archivos enviados exitosamente a ambos webhooks"
         else
           echo "Error: No se pudo crear el archivo ZIP"
           exit 1
