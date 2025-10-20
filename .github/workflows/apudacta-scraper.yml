@@ -78,9 +78,7 @@ jobs:
       if: steps.check_files.outputs.FILES_FOUND == 'true'
       run: |
         MAIN_FILE="${{ steps.check_files.outputs.MAIN_FILE }}"
-        echo "Enviando archivo $MAIN_FILE a webhooks..."
-        # Webhook de test
-        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook-test/poderes
+        echo "Enviando archivo $MAIN_FILE a producción..."
         # Webhook de producción
         curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook/poderes
 
