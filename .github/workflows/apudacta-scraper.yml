@@ -49,6 +49,19 @@ jobs:
         mkdir -p descargas
         timeout 25m python easyday.py || exit 1
 
+    - name: Create Certificates ZIP
+      id: create_zip
+      run: |
+        echo "Creando ZIP con poderes completos..."
+        if [ -d "procesados/PODERES" ] && [ "$(ls -A procesados/PODERES)" ]; then
+          zip -r poderes.zip procesados/PODERES/
+          echo "ZIP_CREATED=true" >> $GITHUB_OUTPUT
+          echo "ZIP_FILE=poderes.zip" >> $GITHUB_OUTPUT
+        else
+          echo "No se encontraron poderes"
+          echo "ZIP_CREATED=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Check Downloaded Files
       id: check_files
       run: |
@@ -67,23 +80,25 @@ jobs:
         MAIN_FILE="${{ steps.check_files.outputs.MAIN_FILE }}"
         echo "Enviando archivo $MAIN_FILE a webhooks..."
         # Webhook de test
-        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook-test/99305ca7-ec18-465a-b192-05f3708387b4
+        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook-test/poderes
         # Webhook de producción
-        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook/99305ca7-ec18-465a-b192-05f3708387b4
+        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook-test/poderes
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: apudacta-processed-files
-        path: "*.7z"
+        path: |
+          "*.7z"
+          "poderes.zip"
         retention-days: 7
       continue-on-error: true
 
     - name: Create Success Issue
       if: steps.check_files.outputs.FILES_FOUND == 'true'
       run: |
-        gh issue create --title "ApudActa Success $(date +%Y-%m-%d)" --body "Proceso completado exitosamente" --label "success"
+        gh issue create --title "ApudActa Success $(date +%Y-%m-%d)" --body "Proceso completado exitosamente - Archivos enviados" --label "success"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
