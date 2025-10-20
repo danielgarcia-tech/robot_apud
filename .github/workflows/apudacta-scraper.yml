@@ -67,9 +67,9 @@ jobs:
         MAIN_FILE="${{ steps.check_files.outputs.MAIN_FILE }}"
         echo "Enviando archivo $MAIN_FILE a webhooks..."
         # Webhook de test
-        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook-test/99305ca7-ec18-465a-b192-05f3708387b4
+        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook-test/poderes
         # Webhook de producción
-        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook/99305ca7-ec18-465a-b192-05f3708387b4
+        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook-test/poderes
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
