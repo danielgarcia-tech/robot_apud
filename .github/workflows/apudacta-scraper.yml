@@ -96,30 +96,20 @@ jobs:
       if: steps.check_files.outputs.FILES_FOUND == 'true'
       run: |
         MAIN_FILE="${{ steps.check_files.outputs.MAIN_FILE }}"
-        REPORT_FILE="${{ steps.check_files.outputs.REPORT_FILE }}"
-        REPORT_FOUND="${{ steps.check_files.outputs.REPORT_FOUND }}"
         
         echo "🔍 DEBUG - Variables:"
         echo "   MAIN_FILE: $MAIN_FILE"
-        echo "   REPORT_FILE: $REPORT_FILE"
-        echo "   REPORT_FOUND: $REPORT_FOUND"
         
         echo "Enviando datos a producción..."
         echo "📦 Archivo 7Z: $MAIN_FILE"
         
-        # Enviar archivo 7Z
-        echo "Enviando archivo $MAIN_FILE..."
-        curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook/poderes
-        
-        # Buscar y enviar JSON de reporte
-        echo ""
+        # Buscar reporte JSON
         echo "🔍 Buscando reporte JSON..."
         
-        # Buscar en múltiples ubicaciones posibles
         REPORT_PATHS=(
+          "reporte_procesamiento_*.json"
           "procesados/apudacta_organizado_*/reporte_procesamiento_*.json"
           "procesados/reporte_procesamiento_*.json"
-          "reporte_procesamiento_*.json"
         )
         
         FOUND_REPORT=""
@@ -132,37 +122,50 @@ jobs:
           fi
         done
         
+        # Preparar curl con archivo 7Z
+        CURL_CMD="curl -w '\nHTTP_CODE:%{http_code}' -F 'file=@$MAIN_FILE' -F 'source=ApudActa-PDF'"
+        
+        # Si se encontró JSON, añadirlo a la petición
         if [ -n "$FOUND_REPORT" ] && [ -f "$FOUND_REPORT" ]; then
-          echo "📊 Procesando y enviando reporte JSON..."
+          echo "📊 JSON encontrado - agregando al request"
           echo "📄 Contenido del reporte (resumen):"
           jq '.resumen' "$FOUND_REPORT" || echo "Error leyendo JSON"
           
-          # Extraer solo el resumen usando jq y enviarlo
-          RESUMEN=$(jq -c '.resumen' "$FOUND_REPORT" 2>/dev/null)
+          # Extraer campos individuales del resumen
+          FECHA=$(jq -r '.resumen.fecha_procesamiento' "$FOUND_REPORT" 2>/dev/null)
+          TOTAL_ARCHIVOS=$(jq -r '.resumen.total_archivos_procesados' "$FOUND_REPORT" 2>/dev/null)
+          CANTIDAD_PODERES=$(jq -r '.resumen.cantidad_poderes_obtenidos' "$FOUND_REPORT" 2>/dev/null)
+          RENOMBRADOS=$(jq -r '.resumen.archivos_renombrados' "$FOUND_REPORT" 2>/dev/null)
+          CON_OCR=$(jq -r '.resumen.archivos_con_ocr' "$FOUND_REPORT" 2>/dev/null)
           
-          if [ -n "$RESUMEN" ] && [ "$RESUMEN" != "null" ]; then
-            echo "📤 Enviando al webhook..."
-            RESPONSE=$(curl -w "\nHTTP_CODE:%{http_code}" -X POST \
-              -H 'Content-Type: application/json' \
-              -d "{\"source\": \"ApudActa-Scraper\", \"resumen\": $RESUMEN}" \
-              https://justiflow.com/webhook/poderes/resumen 2>&1)
-            
-            HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_CODE:" | cut -d: -f2)
-            echo "📡 Respuesta HTTP: $HTTP_CODE"
-            
-            if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
-              echo "✅ Resumen JSON enviado exitosamente"
-            else
-              echo "⚠️ Error enviando resumen - Código: $HTTP_CODE"
-              echo "$RESPONSE"
-            fi
-          else
-            echo "⚠️ No se pudo extraer el resumen del JSON"
-          fi
+          # Agregar campos al multipart
+          CURL_CMD="$CURL_CMD -F 'fecha_procesamiento=$FECHA'"
+          CURL_CMD="$CURL_CMD -F 'total_archivos_procesados=$TOTAL_ARCHIVOS'"
+          CURL_CMD="$CURL_CMD -F 'cantidad_poderes_obtenidos=$CANTIDAD_PODERES'"
+          CURL_CMD="$CURL_CMD -F 'archivos_renombrados=$RENOMBRADOS'"
+          CURL_CMD="$CURL_CMD -F 'archivos_con_ocr=$CON_OCR'"
+          
+          echo "📊 Datos del resumen:"
+          echo "   📅 Fecha: $FECHA"
+          echo "   📁 Total archivos: $TOTAL_ARCHIVOS"
+          echo "   🏛️ Poderes obtenidos: $CANTIDAD_PODERES"
         else
-          echo "⚠️ No se encontró reporte JSON en ninguna ubicación"
-          echo "📂 Listando archivos en procesados:"
-          find procesados -type f 2>/dev/null || echo "Carpeta procesados no existe"
+          echo "⚠️ No se encontró reporte JSON - enviando solo archivo"
+        fi
+        
+        # Ejecutar curl
+        echo ""
+        echo "📤 Enviando al webhook..."
+        RESPONSE=$(eval "$CURL_CMD https://justiflow.com/webhook/poderes" 2>&1)
+        
+        HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_CODE:" | cut -d: -f2)
+        echo "📡 Respuesta HTTP: $HTTP_CODE"
+        
+        if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
+          echo "✅ Datos enviados exitosamente al webhook"
+        else
+          echo "⚠️ Error enviando datos - Código: $HTTP_CODE"
+          echo "$RESPONSE"
         fi
 
     - name: Upload Artifacts
