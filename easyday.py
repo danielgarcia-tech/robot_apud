@@ -854,12 +854,14 @@ class EasyDayScraper:
         archivos_con_ocr = sum(1 for r in self.processing_results if r.get('tiene_ocr') == 'Sí')
         archivos_con_identificadores = sum(1 for r in self.processing_results if r.get('identificadores_encontrados', 0) > 0)
         total_identificadores = sum(r.get('identificadores_encontrados', 0) for r in self.processing_results)
+        cantidad_poderes = len(certificados)  # Cantidad de poderes obtenidos
         
         reporte = {
             "resumen": {
                 "fecha_procesamiento": datetime.now().isoformat(),
                 "carpeta_organizada": organized_folder,
                 "total_archivos_procesados": total_archivos,
+                "cantidad_poderes_obtenidos": cantidad_poderes,
                 "archivos_renombrados": archivos_renombrados,
                 "archivos_con_ocr": archivos_con_ocr,
                 "archivos_con_identificadores": archivos_con_identificadores,
@@ -893,6 +895,8 @@ class EasyDayScraper:
         
         print(f"\n📊 REPORTE DE PROCESAMIENTO ORGANIZADO:")
         print(f"   📁 Total archivos procesados: {total_archivos}")
+        print(f"   🏛️ PODERES OBTENIDOS: {cantidad_poderes}")
+        print(f"   📋 Solicitudes procesadas: {len(solicitudes)}")
         print(f"   🔄 Archivos renombrados: {archivos_renombrados}")
         print(f"   🔍 Con OCR: {archivos_con_ocr}")
         print(f"   🆔 Con identificadores: {archivos_con_identificadores}")
@@ -912,12 +916,14 @@ class EasyDayScraper:
         archivos_con_ocr = sum(1 for r in self.processing_results if r.get('tiene_ocr') == 'Sí')
         archivos_con_identificadores = sum(1 for r in self.processing_results if r.get('identificadores_encontrados', 0) > 0)
         total_identificadores = sum(r.get('identificadores_encontrados', 0) for r in self.processing_results)
+        cantidad_poderes = sum(1 for r in self.processing_results if 'PODER_' in r.get('archivo_nuevo', ''))
         
         reporte = {
             "resumen": {
                 "fecha_procesamiento": datetime.now().isoformat(),
                 "carpeta_salida": self.processed_path,
                 "total_archivos": total_archivos,
+                "cantidad_poderes_obtenidos": cantidad_poderes,
                 "archivos_renombrados": archivos_renombrados,
                 "archivos_con_ocr": archivos_con_ocr,
                 "archivos_con_identificadores": archivos_con_identificadores,
@@ -933,6 +939,7 @@ class EasyDayScraper:
         
         print(f"\n📊 REPORTE DE PROCESAMIENTO:")
         print(f"   📁 Total archivos procesados: {total_archivos}")
+        print(f"   🏛️ PODERES OBTENIDOS: {cantidad_poderes}")
         print(f"   🔄 Archivos renombrados: {archivos_renombrados}")
         print(f"   🔍 Con OCR: {archivos_con_ocr}")
         print(f"   🆔 Con identificadores: {archivos_con_identificadores}")

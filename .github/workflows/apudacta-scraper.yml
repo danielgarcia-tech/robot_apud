@@ -65,7 +65,7 @@ jobs:
     - name: Check Downloaded Files
       id: check_files
       run: |
-        echo "Buscando archivos 7Z generados..."
+        echo "Buscando archivos 7Z y reporte JSON generados..."
         if ls *.7z 1> /dev/null 2>&1; then
           MAIN_FILE=$(ls -1 *.7z | head -1)
           echo "FILES_FOUND=true" >> $GITHUB_OUTPUT
@@ -73,14 +73,58 @@ jobs:
         else
           echo "FILES_FOUND=false" >> $GITHUB_OUTPUT
         fi
+        
+        # Buscar reporte JSON
+        if [ -d "procesados" ]; then
+          REPORT_FILE=$(find procesados -name "reporte_procesamiento_*.json" -type f | sort -r | head -1)
+          if [ -n "$REPORT_FILE" ]; then
+            echo "REPORT_FOUND=true" >> $GITHUB_OUTPUT
+            echo "REPORT_FILE=$REPORT_FILE" >> $GITHUB_OUTPUT
+            echo "📊 Reporte JSON encontrado: $REPORT_FILE"
+            # Mostrar resumen del reporte
+            python3 -c "
+import json
+with open('$REPORT_FILE', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+    resumen = data.get('resumen', {})
+    print('✅ Resumen del procesamiento:')
+    print(f'   Total archivos: {resumen.get(\"total_archivos_procesados\", 0)}')
+    print(f'   🏛️ Poderes obtenidos: {resumen.get(\"cantidad_poderes_obtenidos\", 0)}')
+    print(f'   📋 Solicitudes: {resumen.get(\"organizacion\", {}).get(\"solicitudes_apudacta\", {}).get(\"cantidad\", 0)}')
+" 2>/dev/null || echo "Error procesando JSON"
+          else
+            echo "REPORT_FOUND=false" >> $GITHUB_OUTPUT
+          fi
+        else
+          echo "REPORT_FOUND=false" >> $GITHUB_OUTPUT
+        fi
 
     - name: Send to Webhook
       if: steps.check_files.outputs.FILES_FOUND == 'true'
       run: |
         MAIN_FILE="${{ steps.check_files.outputs.MAIN_FILE }}"
-        echo "Enviando archivo $MAIN_FILE a producción..."
-        # Webhook de producción
+        REPORT_FILE="${{ steps.check_files.outputs.REPORT_FILE }}"
+        echo "Enviando datos a producción..."
+        echo "📦 Archivo 7Z: $MAIN_FILE"
+        
+        # Enviar archivo 7Z
+        echo "Enviando archivo $MAIN_FILE..."
         curl -F "file=@$MAIN_FILE" -F "source=ApudActa-PDF" https://justiflow.com/webhook/poderes
+        
+        # Enviar JSON de reporte si existe
+        if [ -f "$REPORT_FILE" ] && [ "${{ steps.check_files.outputs.REPORT_FOUND }}" == "true" ]; then
+          echo "📊 Enviando reporte JSON..."
+          # Leer el JSON y enviarlo como data
+          RESUMEN=$(python3 -c "import json; f=open('$REPORT_FILE'); d=json.load(f); print(json.dumps(d.get('resumen', {})))" 2>/dev/null)
+          if [ -n "$RESUMEN" ]; then
+            curl -X POST \
+              -H "Content-Type: application/json" \
+              -d "{\"source\": \"ApudActa-Scraper\", \"resumen\": $RESUMEN}" \
+              https://justiflow.com/webhook/poderes/resumen || echo "⚠️ Error enviando resumen JSON"
+          fi
+        else
+          echo "⚠️ No se encontró reporte JSON para enviar"
+        fi
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
