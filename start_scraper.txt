@@ -1,3 +1,3 @@
 # Trigger file para ejecutar el scraper manualmente
 # Para ejecutar: modifica este archivo y haz push
-# Ejecución: 2026-01-19 - Prueba con JSON copiado a raíz antes de limpieza
+# Ejecución: 2026-01-19 - Envío combinado: archivo 7Z + datos JSON en una sola petición multipart
