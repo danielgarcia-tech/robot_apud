@@ -82,20 +82,18 @@ jobs:
             echo "REPORT_FILE=$REPORT_FILE" >> $GITHUB_OUTPUT
             echo "📊 Reporte JSON encontrado: $REPORT_FILE"
             # Mostrar resumen del reporte
-            python3 << 'EOF'
+            python3 -c "
 import json
-import sys
 try:
     with open('$REPORT_FILE', 'r', encoding='utf-8') as f:
         data = json.load(f)
         resumen = data.get('resumen', {})
         print('✅ Resumen del procesamiento:')
-        print(f'   Total archivos: {resumen.get("total_archivos_procesados", 0)}')
-        print(f'   🏛️ Poderes obtenidos: {resumen.get("cantidad_poderes_obtenidos", 0)}')
-        print(f'   📋 Solicitudes: {resumen.get("organizacion", {}).get("solicitudes_apudacta", {}).get("cantidad", 0)}')
+        print(f'   Total archivos: {resumen.get(\"total_archivos_procesados\", 0)}')
+        print(f'   🏛️ Poderes obtenidos: {resumen.get(\"cantidad_poderes_obtenidos\", 0)}')
 except Exception as e:
-    print(f"Error procesando JSON: {e}")
-EOF
+    print(f'Error: {e}')
+" || echo "No se pudo procesar el JSON"
           else
             echo "REPORT_FOUND=false" >> $GITHUB_OUTPUT
           fi
@@ -118,21 +116,17 @@ EOF
         # Enviar JSON de reporte si existe
         if [ -f "$REPORT_FILE" ] && [ "${{ steps.check_files.outputs.REPORT_FOUND }}" == "true" ]; then
           echo "📊 Enviando reporte JSON..."
-          # Leer el JSON y enviarlo como data
-          RESUMEN=$(python3 << 'PYSCRIPT'
+          # Guardar el contenido del JSON en una variable
+          RESUMEN=$(python3 -c "
 import json
-try:
-    f = open('$REPORT_FILE')
-    d = json.load(f)
-    print(json.dumps(d.get('resumen', {})))
-    f.close()
-except Exception as e:
-    print(json.dumps({"error": str(e)}))
-PYSCRIPT
-)
+f = open('$REPORT_FILE')
+d = json.load(f)
+print(json.dumps(d.get('resumen', {})))
+f.close()
+" 2>/dev/null)
           if [ -n "$RESUMEN" ]; then
             curl -X POST \
-              -H "Content-Type: application/json" \
+              -H 'Content-Type: application/json' \
               -d "{\"source\": \"ApudActa-Scraper\", \"resumen\": $RESUMEN}" \
               https://justiflow.com/webhook/poderes/resumen || echo "⚠️ Error enviando resumen JSON"
           fi
