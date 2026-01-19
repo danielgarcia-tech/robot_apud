@@ -405,20 +405,38 @@ class EasyDayScraper:
         print("\n🧹 Iniciando limpieza de archivos temporales...")
         
         try:
+            # COPIAR REPORTE JSON A LA RAÍZ ANTES DE ELIMINAR
+            print("📋 Buscando reporte JSON para copiar a raíz...")
+            for folder_path in organized_folders:
+                if os.path.exists(folder_path):
+                    for file in os.listdir(folder_path):
+                        if file.startswith("reporte_procesamiento_") and file.endswith(".json"):
+                            json_src = os.path.join(folder_path, file)
+                            json_dst = file  # Copiar a la raíz con el mismo nombre
+                            try:
+                                import shutil as shutil_copy
+                                shutil_copy.copy2(json_src, json_dst)
+                                print(f"   ✅ Reporte JSON copiado a raíz: {file}")
+                            except Exception as e:
+                                print(f"   ❌ Error copiando JSON: {e}")
+            
             # El archivo 7Z final está en el directorio raíz
             final_7z_name = os.path.basename(final_7z_path) if final_7z_path else ""
             
             eliminados = 0
             errores = 0
             
-            # 1. Limpiar directorio raíz (excepto el 7Z final)
+            # 1. Limpiar directorio raíz (excepto el 7Z final y el JSON)
             elementos_raiz = []
             if os.path.exists("."):
                 elementos_raiz = [f for f in os.listdir(".") if os.path.isfile(f)]
             
             for archivo in elementos_raiz:
-                # Conservar solo el archivo 7Z final
+                # Conservar el archivo 7Z final y el reporte JSON
                 if archivo == final_7z_name:
+                    print(f"   ✅ Conservando: {archivo}")
+                    continue
+                if archivo.startswith("reporte_procesamiento_") and archivo.endswith(".json"):
                     print(f"   ✅ Conservando: {archivo}")
                     continue
                     
