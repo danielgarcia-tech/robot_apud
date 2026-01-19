@@ -102,5 +102,4 @@ apudacta_procesado_YYYYMMDD_HHMMSS.7z
 - **Procesamiento**: Hasta 100+ archivos por ejecución
 
 ---
-
-🔑 **Contraseña 7Z**: `Rua2025` | ⏰ **Ejecución**: 6:00 UTC diario | 🎯 **Estado**: Producción
+ | ⏰ **Ejecución**: 6:00 UTC diario | 🎯 **Estado**: Producción
