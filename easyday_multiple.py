@@ -41,6 +41,9 @@ class EasyDayScraperMultiple:
         self.fecha_desde = None
         self.fecha_hasta = None
         
+        # Ruta de exportación (será solicitada al usuario)
+        self.export_path = None
+        
         # Crear carpetas necesarias
         Path(self.download_path).mkdir(parents=True, exist_ok=True)
         Path(self.processed_path).mkdir(parents=True, exist_ok=True)
@@ -99,7 +102,7 @@ class EasyDayScraperMultiple:
                     continue
                 
                 dias = (fecha_hasta - fecha_desde).days
-                print(f"\n✅ Rango válido: {días + 1} días")
+                print(f"\n✅ Rango válido: {dias + 1} días")
                 print(f"   📅 Desde: {fecha_desde.strftime('%Y-%m-%d')}")
                 print(f"   📅 Hasta: {fecha_hasta.strftime('%Y-%m-%d')}")
                 
@@ -111,6 +114,60 @@ class EasyDayScraperMultiple:
             except ValueError:
                 print("\n❌ Formato inválido. Use YYYY-MM-DD (ej: 2026-03-26)")
                 continue
+            except KeyboardInterrupt:
+                print("\n⏹️ Proceso cancelado por usuario")
+                exit(0)
+    
+    def pedir_ruta_exportacion(self):
+        """Pedir al usuario la ruta donde exportar el ZIP final"""
+        print("\n" + "="*60)
+        print("📁 CONFIGURACIÓN DE RUTA DE EXPORTACIÓN")
+        print("="*60)
+        
+        while True:
+            try:
+                print("\n📂 Ingrese la ruta donde desea guardar el ZIP:")
+                print("   💡 Ejemplo: C:\\Users\\Usuario\\Descargas")
+                print("   💡 O presione ENTER para guardar en la carpeta actual")
+                entrada_ruta = input("   > ").strip()
+                
+                # Si está vacío, usar carpeta actual
+                if not entrada_ruta:
+                    self.export_path = os.path.abspath(".")
+                    print(f"\n✅ Se guardará en la carpeta actual: {self.export_path}")
+                    break
+                
+                # Verificar y crear la ruta si no existe
+                ruta_absoluta = os.path.abspath(entrada_ruta)
+                
+                # Si es un archivo, extraer el directorio
+                if os.path.isfile(ruta_absoluta):
+                    print("\n❌ Error: Especificó un archivo, necesito una carpeta")
+                    continue
+                
+                # Crear la carpeta si no existe
+                if not os.path.exists(ruta_absoluta):
+                    try:
+                        os.makedirs(ruta_absoluta, exist_ok=True)
+                        print(f"\n✅ Carpeta creada: {ruta_absoluta}")
+                    except Exception as e:
+                        print(f"\n❌ Error creando carpeta: {e}")
+                        continue
+                else:
+                    # Verificar que sea una carpeta
+                    if not os.path.isdir(ruta_absoluta):
+                        print("\n❌ Error: La ruta especificada no es una carpeta válida")
+                        continue
+                    print(f"\n✅ Usando carpeta existente: {ruta_absoluta}")
+                
+                # Verificar permisos de escritura
+                if not os.access(ruta_absoluta, os.W_OK):
+                    print(f"\n❌ Error: No tiene permisos de escritura en {ruta_absoluta}")
+                    continue
+                
+                self.export_path = ruta_absoluta
+                break
+                
             except KeyboardInterrupt:
                 print("\n⏹️ Proceso cancelado por usuario")
                 exit(0)
@@ -504,6 +561,9 @@ class EasyDayScraperMultiple:
             
             # Paso 0: Pedir fechas al usuario
             self.pedir_fechas_usuario()
+            
+            # Paso 0.5: Pedir ruta de exportación
+            self.pedir_ruta_exportacion()
             
             # Paso 1: Configurar navegador
             self.setup_browser()
@@ -1151,8 +1211,9 @@ class EasyDayScraperMultiple:
         print(f"\n📦 PASO 7: Creando archivo 7Z final...")
         
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        # CREAR EL 7Z EN EL DIRECTORIO RAÍZ PARA QUE SEA ENCONTRADO POR GITHUB ACTIONS
-        output_7z = f"apudacta_procesado_{timestamp}.7z"
+        # Usar ruta de exportación especificada por usuario o directorio actual
+        export_directory = self.export_path if self.export_path else os.path.abspath(".")
+        output_7z = os.path.join(export_directory, f"apudacta_procesado_{timestamp}.7z")
         
         try:
             if organized_folder and os.path.exists(organized_folder):
@@ -1204,7 +1265,8 @@ class EasyDayScraperMultiple:
                         archive.write(file_path, os.path.basename(file_path))
             
             print(f"✅ Archivo 7Z creado: {os.path.basename(output_7z)}")
-            print(f"🔐 Protegido con contraseña: {self.archive_password}")
+            print(f"� Ubicación: {output_7z}")
+            print(f"�🔐 Protegido con contraseña: {self.archive_password}")
             
             return output_7z
             
