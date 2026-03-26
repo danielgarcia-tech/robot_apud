@@ -187,10 +187,18 @@ class EasyDayScraper:
             self.page.click("button[role='tab']:has-text('Descargas Zip')")
             self.wait_step("Click en Descargas Zip")
             
-            # Esperar a que aparezcan los campos de fecha
+            # Esperar a que la página cargue después del click
+            print("⏳ Esperando carga de página...")
+            self.page.wait_for_load_state("networkidle", timeout=20000)
+            time.sleep(2)  # Extra wait por si hay cargas asincronicas
+            self.wait_step("Página cargada")
+            
+            # Esperar a que aparezcan los campos de fecha (con timeout más largo)
             print("⏳ Esperando campos de fecha...")
-            self.page.wait_for_selector("input[name='date-from']", timeout=15000)
-            self.page.wait_for_selector("input[name='date-to']", timeout=15000)
+            self.page.wait_for_selector("input[name='date-from']", timeout=20000)
+            print("✅ Campo 'date-from' encontrado")
+            self.page.wait_for_selector("input[name='date-to']", timeout=20000)
+            print("✅ Campo 'date-to' encontrado")
             self.wait_step("Campos de fecha encontrados")
             
             # Llenar fecha desde (hoy - 30 días)
@@ -211,9 +219,10 @@ class EasyDayScraper:
             self.page.click("button.bg-sky-600.text-white")
             self.wait_step("Click en Buscar")
             
-            # Esperar a que cargue la tabla
+            # Esperar a que cargue la tabla (con timeout más largo)
             print("⏳ Esperando tabla de descargas...")
-            self.page.wait_for_selector("table", timeout=15000)
+            self.page.wait_for_load_state("networkidle", timeout=30000)
+            self.page.wait_for_selector("table", timeout=30000)
             
             print("✅ NAVEGACIÓN COMPLETADA!")
             self.wait_step("Tabla de descargas lista")
