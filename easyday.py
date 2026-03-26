@@ -96,16 +96,20 @@ class EasyDayScraper:
             return None
     
     def setup_browser(self):
-        """Configurar Playwright en modo headless"""
+        """Configurar Playwright según el entorno"""
         try:
             print("\n🚀 PASO 1: Configurando navegador...")
+            
+            # Detectar si estamos en CI/CD o desarrollo local
+            is_ci = os.getenv('CI', 'false').lower() == 'true'
+            headless_mode = True if is_ci else False  # True en CI/CD, False en local (debug)
             
             # Inicializar Playwright
             self.playwright = sync_playwright().start()
             
-            # Crear navegador en modo visible (DEBUG)
+            # Crear navegador adaptado al entorno
             self.browser = self.playwright.chromium.launch(
-                headless=True,  # MODO VISIBLE PARA DEBUG
+                headless=headless_mode,
                 args=[
                     '--disable-blink-features=AutomationControlled'
                 ]
@@ -120,7 +124,10 @@ class EasyDayScraper:
             self.page = self.context.new_page()
             
             print("✅ Navegador configurado correctamente")
-            print("✅ MODO HEADLESS ACTIVADO (sin ventana visible)")
+            if headless_mode:
+                print("✅ MODO HEADLESS (CI/CD - sin ventana visible)")
+            else:
+                print("✅ MODO VISIBLE (DEBUG - se abre ventana del navegador)")
             
             self.wait_step("Navegador listo")
             
