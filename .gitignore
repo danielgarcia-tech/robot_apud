@@ -43,3 +43,6 @@ test*.py
 # Requirements obsoletos
 requirements_*.txt
 !requirements.txt
+
+# Added by ggshield
+.cache_ggshield

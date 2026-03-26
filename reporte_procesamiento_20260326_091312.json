@@ -1,0 +1,346 @@
+{
+  "resumen": {
+    "fecha_procesamiento": "2026-03-26T09:13:12.485455",
+    "carpeta_organizada": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\apudacta_organizado_20260326_091311",
+    "total_archivos_procesados": 14,
+    "cantidad_poderes_obtenidos": 7,
+    "archivos_renombrados": 14,
+    "archivos_con_ocr": 14,
+    "archivos_con_identificadores": 14,
+    "total_identificadores_encontrados": 70
+  },
+  "organizacion": {
+    "poderes_certificados": {
+      "cantidad": 7,
+      "archivos": [
+        "CertificadoRegistro.pdf_11930488C_MARIA_CARMEN_URRUTIA_LLANOS_2026-03-25_17_09_17.pdf",
+        "CertificadoRegistro.pdf_47853013H_MIREIA_VITAL_I_TAÑA_2026-03-25_11_09_51.pdf",
+        "CertificadoRegistro.pdf_73024167H_JONATHAN_ROYO_COUTO_2026-03-25_08_51_47.pdf",
+        "CertificadoRegistro.pdf_75819046Y_ENRIQUE_AVILA_GARCIA_2026-03-25_19_07_57.pdf",
+        "CertificadoRegistro.pdf_77462664K_SANTIAGO_MOURENTE_NOVAS_2026-03-25_20_46_33.pdf",
+        "CertificadoRegistro.pdf_77941621A_MARIA_DEL_CARMEN_RAMIREZ_TASAYCO_2026-03-25_18_22_46.pdf",
+        "CertificadoRegistro.pdf_X3973436W_PAVLINA_DIMITROVA_IVANOVA__2026-03-25_17_02_43.pdf"
+      ]
+    },
+    "solicitudes_apudacta": {
+      "cantidad": 7,
+      "archivos": [
+        "Solicitud_ApudActa_11930488C.pdf_11930488C_MARIA_CARMEN_URRUTIA_LLANOS_2026-03-25_17_09_17.pdf",
+        "Solicitud_ApudActa_47853013H.pdf_47853013H_MIREIA_VITAL_I_TAÑA_2026-03-25_11_09_51.pdf",
+        "Solicitud_ApudActa_73024167H.pdf_73024167H_JONATHAN_ROYO_COUTO_2026-03-25_08_51_46.pdf",
+        "Solicitud_ApudActa_75819046Y.pdf_75819046Y_ENRIQUE_AVILA_GARCIA_2026-03-25_19_07_57.pdf",
+        "Solicitud_ApudActa_77462664K.pdf_77462664K_SANTIAGO_MOURENTE_NOVAS_2026-03-25_20_46_33.pdf",
+        "Solicitud_ApudActa_77941621A.pdf_77941621A_MARIA_DEL_CARMEN_RAMIREZ_TASAYCO_2026-03-25_18_22_46.pdf",
+        "Solicitud_ApudActa_X3973436W.pdf_X3973436W_PAVLINA_DIMITROVA_IVANOVA__2026-03-25_17_02_43.pdf"
+      ]
+    },
+    "excel_solicitudes": {
+      "cantidad": 1,
+      "archivos": [
+        "Solicitudes_2026-03-25.xlsx"
+      ]
+    },
+    "otros_archivos": {
+      "cantidad": 0,
+      "archivos": []
+    }
+  },
+  "archivos_renombrados": [
+    {
+      "original": "CertificadoRegistro.pdf_11930488C_MARIA_CARMEN_URRUTIA_LLANOS_2026-03-25_17_09_17.pdf",
+      "nuevo": "PODER_11930488C.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_11930488C.pdf",
+      "identificador": "11930488C"
+    },
+    {
+      "original": "CertificadoRegistro.pdf_47853013H_MIREIA_VITAL_I_TAÑA_2026-03-25_11_09_51.pdf",
+      "nuevo": "PODER_47853013H.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_47853013H.pdf",
+      "identificador": "47853013H"
+    },
+    {
+      "original": "CertificadoRegistro.pdf_73024167H_JONATHAN_ROYO_COUTO_2026-03-25_08_51_47.pdf",
+      "nuevo": "PODER_73024167H.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_73024167H.pdf",
+      "identificador": "73024167H"
+    },
+    {
+      "original": "CertificadoRegistro.pdf_75819046Y_ENRIQUE_AVILA_GARCIA_2026-03-25_19_07_57.pdf",
+      "nuevo": "PODER_75819046Y.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_75819046Y.pdf",
+      "identificador": "75819046Y"
+    },
+    {
+      "original": "CertificadoRegistro.pdf_77462664K_SANTIAGO_MOURENTE_NOVAS_2026-03-25_20_46_33.pdf",
+      "nuevo": "PODER_77462664K.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_77462664K.pdf",
+      "identificador": "77462664K"
+    },
+    {
+      "original": "CertificadoRegistro.pdf_77941621A_MARIA_DEL_CARMEN_RAMIREZ_TASAYCO_2026-03-25_18_22_46.pdf",
+      "nuevo": "PODER_77941621A.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_77941621A.pdf",
+      "identificador": "77941621A"
+    },
+    {
+      "original": "CertificadoRegistro.pdf_X3973436W_PAVLINA_DIMITROVA_IVANOVA__2026-03-25_17_02_43.pdf",
+      "nuevo": "PODER_X3973436W.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_X3973436W.pdf",
+      "identificador": "X3973436W"
+    },
+    {
+      "original": "Solicitud_ApudActa_11930488C.pdf_11930488C_MARIA_CARMEN_URRUTIA_LLANOS_2026-03-25_17_09_17.pdf",
+      "nuevo": "SOLICITUD_11930488C.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_11930488C.pdf",
+      "identificador": "11930488C"
+    },
+    {
+      "original": "Solicitud_ApudActa_47853013H.pdf_47853013H_MIREIA_VITAL_I_TAÑA_2026-03-25_11_09_51.pdf",
+      "nuevo": "SOLICITUD_47853013H.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_47853013H.pdf",
+      "identificador": "47853013H"
+    },
+    {
+      "original": "Solicitud_ApudActa_73024167H.pdf_73024167H_JONATHAN_ROYO_COUTO_2026-03-25_08_51_46.pdf",
+      "nuevo": "SOLICITUD_73024167H.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_73024167H.pdf",
+      "identificador": "73024167H"
+    },
+    {
+      "original": "Solicitud_ApudActa_75819046Y.pdf_75819046Y_ENRIQUE_AVILA_GARCIA_2026-03-25_19_07_57.pdf",
+      "nuevo": "SOLICITUD_75819046Y.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_75819046Y.pdf",
+      "identificador": "75819046Y"
+    },
+    {
+      "original": "Solicitud_ApudActa_77462664K.pdf_77462664K_SANTIAGO_MOURENTE_NOVAS_2026-03-25_20_46_33.pdf",
+      "nuevo": "SOLICITUD_77462664K.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_77462664K.pdf",
+      "identificador": "77462664K"
+    },
+    {
+      "original": "Solicitud_ApudActa_77941621A.pdf_77941621A_MARIA_DEL_CARMEN_RAMIREZ_TASAYCO_2026-03-25_18_22_46.pdf",
+      "nuevo": "SOLICITUD_77941621A.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_77941621A.pdf",
+      "identificador": "77941621A"
+    },
+    {
+      "original": "Solicitud_ApudActa_X3973436W.pdf_X3973436W_PAVLINA_DIMITROVA_IVANOVA__2026-03-25_17_02_43.pdf",
+      "nuevo": "SOLICITUD_X3973436W.pdf",
+      "path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_X3973436W.pdf",
+      "identificador": "X3973436W"
+    }
+  ],
+  "detalle_procesamiento": [
+    {
+      "archivo_original": "CertificadoRegistro.pdf_11930488C_MARIA_CARMEN_URRUTIA_LLANOS_2026-03-25_17_09_17.pdf",
+      "archivo_nuevo": "PODER_11930488C.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "11930488C",
+      "secuencia_post": "CON DOMICILIO EN SA",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_11930488C.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 215983,
+      "identificadores_encontrados": 3,
+      "procesado_en": "2026-03-26T09:13:12.073712"
+    },
+    {
+      "archivo_original": "CertificadoRegistro.pdf_47853013H_MIREIA_VITAL_I_TAÑA_2026-03-25_11_09_51.pdf",
+      "archivo_nuevo": "PODER_47853013H.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "47853013H",
+      "secuencia_post": "CON DOMICILIO EN CE",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_47853013H.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 215986,
+      "identificadores_encontrados": 3,
+      "procesado_en": "2026-03-26T09:13:12.108909"
+    },
+    {
+      "archivo_original": "CertificadoRegistro.pdf_73024167H_JONATHAN_ROYO_COUTO_2026-03-25_08_51_47.pdf",
+      "archivo_nuevo": "PODER_73024167H.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "73024167H",
+      "secuencia_post": "CON DOMICILIO EN LA",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_73024167H.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 216300,
+      "identificadores_encontrados": 3,
+      "procesado_en": "2026-03-26T09:13:12.140069"
+    },
+    {
+      "archivo_original": "CertificadoRegistro.pdf_75819046Y_ENRIQUE_AVILA_GARCIA_2026-03-25_19_07_57.pdf",
+      "archivo_nuevo": "PODER_75819046Y.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "75819046Y",
+      "secuencia_post": "CON DOMICILIO EN CH",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_75819046Y.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 216294,
+      "identificadores_encontrados": 3,
+      "procesado_en": "2026-03-26T09:13:12.177095"
+    },
+    {
+      "archivo_original": "CertificadoRegistro.pdf_77462664K_SANTIAGO_MOURENTE_NOVAS_2026-03-25_20_46_33.pdf",
+      "archivo_nuevo": "PODER_77462664K.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "77462664K",
+      "secuencia_post": "CON DOMICILIO EN SO",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_77462664K.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 216273,
+      "identificadores_encontrados": 3,
+      "procesado_en": "2026-03-26T09:13:12.205585"
+    },
+    {
+      "archivo_original": "CertificadoRegistro.pdf_77941621A_MARIA_DEL_CARMEN_RAMIREZ_TASAYCO_2026-03-25_18_22_46.pdf",
+      "archivo_nuevo": "PODER_77941621A.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "77941621A",
+      "secuencia_post": "CON DOMICILIO EN SE",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_77941621A.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 216271,
+      "identificadores_encontrados": 3,
+      "procesado_en": "2026-03-26T09:13:12.235112"
+    },
+    {
+      "archivo_original": "CertificadoRegistro.pdf_X3973436W_PAVLINA_DIMITROVA_IVANOVA__2026-03-25_17_02_43.pdf",
+      "archivo_nuevo": "PODER_X3973436W.pdf",
+      "tipo": "NIE",
+      "secuencia": "X3973436W",
+      "secuencia_post": "CON DOMICILIO EN BE",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\PODER_X3973436W.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 216246,
+      "identificadores_encontrados": 3,
+      "procesado_en": "2026-03-26T09:13:12.261709"
+    },
+    {
+      "archivo_original": "Solicitud_ApudActa_11930488C.pdf_11930488C_MARIA_CARMEN_URRUTIA_LLANOS_2026-03-25_17_09_17.pdf",
+      "archivo_nuevo": "SOLICITUD_11930488C.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "11930488C",
+      "secuencia_post": "Nif\nURRUTIA\nEspaña",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_11930488C.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 241536,
+      "identificadores_encontrados": 7,
+      "procesado_en": "2026-03-26T09:13:12.295626"
+    },
+    {
+      "archivo_original": "Solicitud_ApudActa_47853013H.pdf_47853013H_MIREIA_VITAL_I_TAÑA_2026-03-25_11_09_51.pdf",
+      "archivo_nuevo": "SOLICITUD_47853013H.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "47853013H",
+      "secuencia_post": "Nif\nVITAL\nEspaña\nMI",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_47853013H.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 241038,
+      "identificadores_encontrados": 7,
+      "procesado_en": "2026-03-26T09:13:12.324397"
+    },
+    {
+      "archivo_original": "Solicitud_ApudActa_73024167H.pdf_73024167H_JONATHAN_ROYO_COUTO_2026-03-25_08_51_46.pdf",
+      "archivo_nuevo": "SOLICITUD_73024167H.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "73024167H",
+      "secuencia_post": "Nif\nROYO\nEspaña\nJON",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_73024167H.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 240745,
+      "identificadores_encontrados": 7,
+      "procesado_en": "2026-03-26T09:13:12.360215"
+    },
+    {
+      "archivo_original": "Solicitud_ApudActa_75819046Y.pdf_75819046Y_ENRIQUE_AVILA_GARCIA_2026-03-25_19_07_57.pdf",
+      "archivo_nuevo": "SOLICITUD_75819046Y.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "75819046Y",
+      "secuencia_post": "Nif\nAVILA\nEspaña\nEN",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_75819046Y.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 242278,
+      "identificadores_encontrados": 7,
+      "procesado_en": "2026-03-26T09:13:12.386117"
+    },
+    {
+      "archivo_original": "Solicitud_ApudActa_77462664K.pdf_77462664K_SANTIAGO_MOURENTE_NOVAS_2026-03-25_20_46_33.pdf",
+      "archivo_nuevo": "SOLICITUD_77462664K.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "77462664K",
+      "secuencia_post": "Nif\nMOURENTE\nEspaña",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_77462664K.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 241037,
+      "identificadores_encontrados": 7,
+      "procesado_en": "2026-03-26T09:13:12.414346"
+    },
+    {
+      "archivo_original": "Solicitud_ApudActa_77941621A.pdf_77941621A_MARIA_DEL_CARMEN_RAMIREZ_TASAYCO_2026-03-25_18_22_46.pdf",
+      "archivo_nuevo": "SOLICITUD_77941621A.pdf",
+      "tipo": "DNI/NIF",
+      "secuencia": "77941621A",
+      "secuencia_post": "Nif\nRAMIREZ\nEspaña",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_77941621A.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 241027,
+      "identificadores_encontrados": 7,
+      "procesado_en": "2026-03-26T09:13:12.440234"
+    },
+    {
+      "archivo_original": "Solicitud_ApudActa_X3973436W.pdf_X3973436W_PAVLINA_DIMITROVA_IVANOVA__2026-03-25_17_02_43.pdf",
+      "archivo_nuevo": "SOLICITUD_X3973436W.pdf",
+      "tipo": "NIE",
+      "secuencia": "X3973436W",
+      "secuencia_post": "Nº Extranjero (Nie)",
+      "estado": "Procesado y renombrado",
+      "export_path": "C:\\Users\\DanielGarcíaCarabelo\\OneDrive - RUA ABOGADOS S.L\\IT PROJECTS - Documentos\\REPOSITORIO PROGRAMAS\\CODIGO FUENTE (NO TOCAR)\\WEBSCRAPPER APUDACTA\\PROYECTO ROBOT APUD\\procesados\\SOLICITUD_X3973436W.pdf",
+      "tiene_ocr": "Sí",
+      "cliente": "",
+      "fecha": "2026-03-25",
+      "tamaño_bytes": 242603,
+      "identificadores_encontrados": 7,
+      "procesado_en": "2026-03-26T09:13:12.474396"
+    }
+  ]
+}

@@ -103,9 +103,9 @@ class EasyDayScraper:
             # Inicializar Playwright
             self.playwright = sync_playwright().start()
             
-            # Crear navegador en modo headless (sin ventana visible)
+            # Crear navegador en modo visible (DEBUG)
             self.browser = self.playwright.chromium.launch(
-                headless=True,  # MODO HEADLESS
+                headless=True,  # MODO VISIBLE PARA DEBUG
                 args=[
                     '--disable-blink-features=AutomationControlled'
                 ]
@@ -179,6 +179,30 @@ class EasyDayScraper:
             self.page.wait_for_selector("button[role='tab']:has-text('Descargas Zip')", timeout=15000)
             self.page.click("button[role='tab']:has-text('Descargas Zip')")
             self.wait_step("Click en Descargas Zip")
+            
+            # Esperar a que aparezcan los campos de fecha
+            print("⏳ Esperando campos de fecha...")
+            self.page.wait_for_selector("input[name='date-from']", timeout=15000)
+            self.page.wait_for_selector("input[name='date-to']", timeout=15000)
+            self.wait_step("Campos de fecha encontrados")
+            
+            # Llenar fecha desde (hoy - 30 días)
+            print("📅 Llenando fecha desde...")
+            fecha_desde = (datetime.now() - __import__('datetime').timedelta(days=30)).strftime("%Y-%m-%d")
+            self.page.fill("input[name='date-from']", fecha_desde)
+            self.wait_step(f"Fecha desde: {fecha_desde}")
+            
+            # Llenar fecha hasta (hoy)
+            print("📅 Llenando fecha hasta...")
+            fecha_hasta = datetime.now().strftime("%Y-%m-%d")
+            self.page.fill("input[name='date-to']", fecha_hasta)
+            self.wait_step(f"Fecha hasta: {fecha_hasta}")
+            
+            # Hacer click en botón Buscar
+            print("👆 Haciendo click en botón 'Buscar'...")
+            self.page.wait_for_selector("button.bg-sky-600.text-white", timeout=15000)
+            self.page.click("button.bg-sky-600.text-white")
+            self.wait_step("Click en Buscar")
             
             # Esperar a que cargue la tabla
             print("⏳ Esperando tabla de descargas...")
